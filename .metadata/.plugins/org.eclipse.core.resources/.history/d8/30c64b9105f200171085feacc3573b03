@@ -1,0 +1,225 @@
+import java.awt.Font;
+
+/*
+ * Created on Eiar 5767
+ * @author levian
+ * for Student
+ */
+
+public class Animation3DForStu extends Thread
+{
+	MainPanel3DForStu myPanel;
+
+	public Animation3DForStu(MainPanel3DForStu myPanel)
+	{
+		this.myPanel=myPanel;
+		setDaemon(true);
+		start();
+	}
+	
+
+	public void run()
+	{
+		double missileSpeed=1;
+		double helliSpeed=1.3;
+
+		int i;
+		myPanel.mati.setIdentity();
+		
+		while(true){
+
+			if(Math.abs(myPanel.pW.x) <=myPanel.deathDistance && Math.abs(myPanel.pW.y) <=myPanel.deathDistance && Math.abs(myPanel.pW.z) <=myPanel.deathDistance){
+			
+				//myPanel.explosion();
+
+				myPanel.stopAnimation();
+				
+			}
+			myPanel.spinProp();
+			
+					myPanel.mati.setIdentity();
+					myPanel.matiMissile.setIdentity();
+			//myPanel.mati.setMatMove(10, 0, 0);
+//			myPanel.phC.setXYZ(myPanel.phB.x+1.25*(myPanel.phF.x-myPanel.phB.x),
+//					myPanel.phB.y+1.25*(myPanel.phF.y-myPanel.phB.y), myPanel.phB.z+1.25*(myPanel.phF.z-myPanel.phB.z));
+			
+			myPanel.phC.setXYZ(myPanel.phB.x+helliSpeed*(myPanel.phF.x-myPanel.phB.x), myPanel.phB.y+helliSpeed*(myPanel.phF.y-myPanel.phB.y), myPanel.phB.z+helliSpeed*(myPanel.phF.z-myPanel.phB.z));
+			myPanel.move(myPanel.phC.x-myPanel.phF.x, myPanel.phC.y-myPanel.phF.y, myPanel.phC.z-myPanel.phF.z);
+			
+			myPanel.moveMissile(myPanel.pwx*missileSpeed, myPanel.pwy*missileSpeed, myPanel.pwz*missileSpeed);
+	//		myPanel.moveMissile(myPanel.pwx*0.1, myPanel.pwy*0, myPanel.pwz*0);
+			
+			
+						
+			myPanel.prepareToShowAndRepaint();
+			
+			try
+			{
+			sleep(50);
+			} catch(InterruptedException  e){}
+		
+			
+			//myPanel.rotateXFix(p00.y, p00.z, teta);
+			myPanel.prepareToShowAndRepaint();
+			try
+			{
+			sleep(50);
+			} catch(InterruptedException  e){}
+		
+		
+		
+		}
+		
+		
+//		for (i=0;i<5;i++)
+//		{
+//			myPanel.rotateXFixUp(Math.PI/20);
+//			myPanel.spinProp();
+//			myPanel.prepareToShowAndRepaint();
+//			try
+//			{
+//				sleep(200);
+//			} catch(InterruptedException  e){}
+//		
+//		}
+//		
+		
+//		while(true){
+//			//myPanel.move(1, 0, 0);
+//		//	myPanel.spinProp();
+//			myPanel.prepareToShowAndRepaint();
+//			try
+//			{
+//				sleep(200);
+//			} catch(InterruptedException  e){}
+//		}
+		
+		
+//		while (true)
+//		{
+//			for (i=0;i<5;i++)
+//				{
+//					myPanel.rotateXFixUp(Math.PI/20);
+//					myPanel.spinProp();
+//					myPanel.prepareToShowAndRepaint();
+//					try
+//					{
+//						sleep(200);
+//					} catch(InterruptedException  e){}
+//				
+//				}
+//			for (i=0;i<45;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.move(5,0,0);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			
+//			for (i=0;i<5;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.rotateAxisRight(Math.PI/20);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			for (i=0;i<43;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.move(0,5,0);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			for (i=0;i<5;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.rotateAxisRight(Math.PI/20);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			for (i=0;i<90;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.move(-5,0,0);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			for (i=0;i<5;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.rotateAxisRight(Math.PI/20);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			for (i=0;i<45;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.move(0,-5,0);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			for (i=0;i<5;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.rotateAxisRight(Math.PI/20);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			for (i=0;i<45;i++)
+//			{
+//				
+//				myPanel.spinProp();
+//				myPanel.move(5,0,0);
+//				myPanel.prepareToShowAndRepaint();
+//				try
+//				{
+//					sleep(20);
+//				} catch(InterruptedException  e){}
+//			
+//			}
+//			
+//		}
+	}
+	
+}
+

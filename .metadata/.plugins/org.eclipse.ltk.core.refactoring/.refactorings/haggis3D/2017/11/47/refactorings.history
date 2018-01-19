@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract method &apos;‪public void spinProp1()‬&apos; from &apos;‪MainPanel3DForStu.spinProp()‬&apos; to &apos;MainPanel3DForStu&apos;&#x0D;&#x0A;- Original project: &apos;haggis3D&apos;&#x0D;&#x0A;- Method name: &apos;spinProp1&apos;&#x0D;&#x0A;- Destination type: &apos;MainPanel3DForStu&apos;&#x0D;&#x0A;- Declared visibility: &apos;public&apos;" comments="false" description="Extract method &apos;spinProp1&apos;" destination="0" exceptions="false" flags="786434" id="org.eclipse.jdt.ui.extract.method" input="/src&lt;{MainPanel3DForStu.java" name="spinProp1" replace="false" selection="4289 230" stamp="1511189953844" version="1.0" visibility="1"/>
+</session>
