@@ -96,6 +96,7 @@ public class Matrix3DForStu
 	    a = a/l;   b = b/l;   c = c/l;
 	    d = (float) Math.sqrt(b*b+c*c);
 
+	    
 	    if (d == 0)
 	      //; 
 	     this.setMatRotateFixX(y1, z1, teta);

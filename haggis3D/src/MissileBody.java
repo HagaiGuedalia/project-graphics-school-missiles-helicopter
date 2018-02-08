@@ -63,16 +63,16 @@ public class MissileBody {
 	{
 		
 		// starts from bottom left
-		xReal[0]=x;				yReal[0]=y+dz;		zReal[0]=z;   //stick4?
+		xReal[0]=x;					yReal[0]=y+dz;		zReal[0]=z;   //stick4?
 		xReal[1]=x; 				yReal[1]=y;			zReal[1]=z;   //stick1
-		xReal[2]=x+dz*2+length; 		yReal[2]=y;			zReal[2]=z;
-		xReal[3]=x+dz*2+length;			yReal[3]=y+dz;		zReal[3]=z;
+		xReal[2]=x+dz*2+length; 	yReal[2]=y;			zReal[2]=z;
+		xReal[3]=x+dz*2+length;		yReal[3]=y+dz;		zReal[3]=z;
 		
 		
-		xReal[4]=x;				yReal[4]=y+dz;		zReal[4]=z+dz;   //stick3
+		xReal[4]=x;					yReal[4]=y+dz;		zReal[4]=z+dz;   //stick3
 		xReal[5]=x; 				yReal[5]=y;			zReal[5]=z+dz;   //stick2
-		xReal[6]=x+dz*2+length; 		yReal[6]=y;			zReal[6]=z+dz;
-		xReal[7]=x+dz*2+length;			yReal[7]=y+dz;		zReal[7]=z+dz;
+		xReal[6]=x+dz*2+length; 	yReal[6]=y;			zReal[6]=z+dz;
+		xReal[7]=x+dz*2+length;		yReal[7]=y+dz;		zReal[7]=z+dz;
 		
 		xReal[8]=x+dz*2+dz/2+length;	yReal[8]=y+dz/2;	zReal[8]=z+(dz/2);
 	}

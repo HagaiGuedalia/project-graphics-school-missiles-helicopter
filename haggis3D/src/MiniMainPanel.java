@@ -63,10 +63,15 @@ public class MiniMainPanel extends JPanel
 		mP.mabatHellicopter.fromPointToGuf();
 		mP.mabatHellicopter.convertAndShow(g2d);
 		
-		for (Missile miss : mP.mabatMissileList) {
-			miss.mullMat();
-			miss.fromPointToGuf();
-			miss.convertAndShow(g2d);
+		synchronized (mP.object) 
+		{
+			for (Missile miss : mP.mabatMissileList) {
+				if(miss.exists){
+					miss.mullMat();
+					miss.fromPointToGuf();
+					miss.convertAndShow(g2d);
+				}
+			}
 		}
 
 //		for (Comparable trapez : mP.trapezimmabatFormmP) 

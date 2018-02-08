@@ -18,14 +18,18 @@ public class Missile extends Thread
 	Matrix3DForStu matiMissile;
 	
 	Color color;
-	Point3D pmT, pmB, pmF, pW;
+	Point3D pmT, pmB, pmF, pW, pmMr, pmMl, pmMc;
 	double wSmall, pwx, pwy, pwz;
 	double randomRange, speed, sum;
+	double origSpeed;
 	int gasTank, currentGas, callibrate;
+	boolean exists;
+	int existsTime, missileNum, waitSet, waitTime;
 	
 	Random rand;
 	double randomAccuracy;
 	int randomDirection;
+	
 	
 	public Missile(Point3D magoz, MainPanel3DForStu myPanel) 
 	{
@@ -39,12 +43,17 @@ public class Missile extends Thread
 		
 		 matiMissile=new Matrix3DForStu();
 		 
-		 pmB = new Point3D();
-		 pmT = new Point3D();
-		 pmF = new Point3D();
+		 pmB = new Point3D(); //bottom
+		 pmT = new Point3D(); //top
+		 pmF = new Point3D();  //front
 		 pW = new Point3D();
+		 pmMl = new Point3D();
+		 pmMr = new Point3D();
+		 pmMc = new Point3D();
 		 rand = new Random();
 		
+		 exists = false;
+		 color = new Color(255, 0, 0);
 	}
 
 //	public void buildShape(double x, double y, double z, double dz, Matrix3DForStu mati)	
@@ -106,26 +115,26 @@ public class Missile extends Thread
 		missilebody.buildShape(x, y, z, dz, length);
 		
 		missilestick1.color=Color.black;
-		missilestick1.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick1.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  Math.PI/4);
 		missilestick1.mullMat(matiMissile);
 		
 		missilestick2.color=Color.blue;
-		missilestick2.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick2.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  -Math.PI/4);
 		missilestick2.mullMat(matiMissile);
 		matiMissile.setMatMove(0.0, 0.0, dz);
 		missilestick2.mullMat(matiMissile);
 		
 		missilestick3.color=Color.red;
-		missilestick3.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick3.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  Math.PI+Math.PI/4);
 		missilestick3.mullMat(matiMissile);
 		matiMissile.setMatMove(0.0, dz, dz);
 		missilestick3.mullMat(matiMissile);
 		
 		missilestick4.color=Color.cyan;
-		missilestick4.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick4.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  Math.PI-Math.PI/4);
 		missilestick4.mullMat(matiMissile);
 		matiMissile.setMatMove(0.0, dz, 0.0);
@@ -137,7 +146,10 @@ public class Missile extends Thread
 		pmF.setXYZ(missilebody.xReal[8], missilebody.yReal[8], missilebody.zReal[8]);
 		pmB.setXYZ(missilebody.xReal[0], missilebody.yReal[0], missilebody.zReal[8]);
 		pW.setXYZ((myPanel.hellicopter.p1.x+myPanel.hellicopter.p2.x)/2-(pmF.x), (myPanel.hellicopter.p1.y+myPanel.hellicopter.p2.y)/2-(pmF.y), (myPanel.hellicopter.p1.z+myPanel.hellicopter.p2.z)/2-(pmF.z));	
-
+		pmMr.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[0])/3, pmF.y, missilebody.zReal[0]);
+//		pmMl.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[4])/3, pmF.y, missilebody.zReal[4]);
+		pmMl.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[4])/3, pmF.y, missilebody.zReal[4]);
+		pmMc.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[0])/3, pmF.y, pmF.z);
 		
 		pwx=0;
 		pwy=0;
@@ -145,6 +157,8 @@ public class Missile extends Thread
 		
 
 		this.randomRange=randomRange;
+		this.origSpeed=speed;
+		this.waitTime=this.waitSet;
 		this.speed=speed;
 		this.callibrate=callibrate;
 	}
@@ -155,29 +169,29 @@ public class Missile extends Thread
 		
 		//missilebody.buildShape(x-dz/2, y, z-dz/2, dz);
 		 missilebody.color=color;
-		missilebody.buildShape(x, y, z, dz, length);
+		missilebody.buildShape(x, y, z, dz+callibrate, length);
 		
 		missilestick1.color=Color.black;
-		missilestick1.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick1.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  Math.PI/4);
 		missilestick1.mullMat(matiMissile);
 		
 		missilestick2.color=Color.blue;
-		missilestick2.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick2.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  -Math.PI/4);
 		missilestick2.mullMat(matiMissile);
 		matiMissile.setMatMove(0.0, 0.0, dz);
 		missilestick2.mullMat(matiMissile);
 		
 		missilestick3.color=Color.red;
-		missilestick3.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick3.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  Math.PI+Math.PI/4);
 		missilestick3.mullMat(matiMissile);
 		matiMissile.setMatMove(0.0, dz, dz);
 		missilestick3.mullMat(matiMissile);
 		
 		missilestick4.color=Color.cyan;
-		missilestick4.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz);
+		missilestick4.buildShape(x-dz/3, y-(dz/2), (z-(dz/5)/2), dz, length/3);
 		matiMissile.setMatRotateFixX((z-(dz/5)/2/2),  (y-(dz/2))+dz*0.6,  Math.PI-Math.PI/4);
 		missilestick4.mullMat(matiMissile);
 		matiMissile.setMatMove(0.0, dz, 0.0);
@@ -227,7 +241,7 @@ public class Missile extends Thread
 		
 		if(currentGas <= 0)
 		{
-				speed = 0;
+				speed = 4;
 		}
 		
 		if(tik % callibrate ==0 )
@@ -266,6 +280,11 @@ public class Missile extends Thread
 	   	return (Math.abs(pW.x) <=deathDistance && Math.abs(pW.y) <=deathDistance && Math.abs(pW.z) <=deathDistance );
 
 	}
+	public boolean ifCrash(Missile miss)
+	{
+		return (Math.abs(miss.pmF.x-this.pmF.x) <=myPanel.deathDistance && Math.abs(miss.pmF.y-this.pmF.y) <=myPanel.deathDistance && Math.abs(miss.pmF.z-this.pmF.z) <=myPanel.deathDistance);
+	}
+	
 
 	public void fromPointToGuf()
 	{
@@ -278,6 +297,8 @@ public class Missile extends Thread
 	}
 	
 	Stack<Missilestick> stack = new Stack<Missilestick>();
+
+
 	
 //	public boolean sameSide(int i, int j) {
 //		if 
@@ -354,8 +375,13 @@ public class Missile extends Thread
 		pmT.mullMat(matiMissile);
 		pmF.mullMat(matiMissile);
 		pW.mullMat(matiMissile);
+		pmMr.mullMat(matiMissile); 
+		pmMl.mullMat(matiMissile);
+		pmMc.mullMat(matiMissile);
 		
 	}
+
+
 
 	
 

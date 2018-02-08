@@ -32,16 +32,16 @@ public class Missilestick {
 	}
 	
 
-	public void buildShape(double x, double y, double z, double dz)
+	public void buildShape(double x, double y, double z, double dz, double length)
 	{
-		xReal[0]=x; 			yReal[0]=y;					zReal[0]=z;
+		xReal[0]=x-length/3; 	yReal[0]=y;					zReal[0]=z;
 		xReal[1]=x+dz*0.4;		yReal[1]=y;					zReal[1]=z;
-		xReal[2]=x+dz;			yReal[2]=y+dz*0.6;			zReal[2]=z;
+		xReal[2]=x+dz+length;	yReal[2]=y+dz*0.6;			zReal[2]=z;
 		xReal[3]=x+dz*0.4;		yReal[3]=y+dz*0.6;			zReal[3]=z;
 		
-		xReal[4]=x; 			yReal[4]=y;					zReal[4]=z+dz*0.1;
+		xReal[4]=x-length/3; 	yReal[4]=y;					zReal[4]=z+dz*0.1;
 		xReal[5]=x+dz*0.4;		yReal[5]=y;					zReal[5]=z+dz*0.1;
-		xReal[6]=x+dz;			yReal[6]=y+dz*0.6;			zReal[6]=z+dz*0.1;
+		xReal[6]=x+dz+length;	yReal[6]=y+dz*0.6;			zReal[6]=z+dz*0.1;
 		xReal[7]=x+dz*0.4;		yReal[7]=y+dz*0.6;			zReal[7]=z+dz*0.1;
 
 	}
