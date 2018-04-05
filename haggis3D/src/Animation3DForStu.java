@@ -61,7 +61,7 @@ public class Animation3DForStu extends Thread
 					if(miss.exists){
 					myPanel.moveAllMissiles(miss.pwx * missileSpeed, miss.pwy
 							* missileSpeed, miss.pwz * missileSpeed, miss);
-					myPanel.rotateMissile(miss);
+					//myPanel.rotateMissile(miss);
 					}
 				}
 			}

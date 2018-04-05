@@ -16,6 +16,7 @@ public class Hellicopter
 	Matrix3DForStu mati; 
 	Matrix3DForStu matiRotate; 
 
+	MainPanel3DForStu mP;
 
 	Point3D p1, p2, p3, phF, phB, phC, phCenter;
 
@@ -41,6 +42,7 @@ public class Hellicopter
 		 phC = new Point3D();
 		 phCenter = new Point3D();
 
+		 mP= myPanel;
 	}
 
 	public void spinProp1(Matrix3DForStu matiProp) 
@@ -87,6 +89,15 @@ public class Hellicopter
 		helliprop4.mullMat(mati);
 		
 		//helliprop1.buildShape(x, y+dz*0.42, (z-(dz/5)/2), dz/5);
+		
+		
+
+		 p1.setXYZ(mP.p00.x, mP.p00.y, mP.p00.z);
+		 p2.setXYZ(mP.p00.x, mP.p00.y+150, mP.p00.z);
+		 phB.setXYZ(mP.p00.x-70*2.85/2-70/2+mP.helliWidth*0.28, mP.p00.y+mP.helliWidth*1.2, mP.p00.z);
+		 phF.setXYZ(mP.p00.x-70*2.85/2-70/2+mP.helliWidth*2.9, mP.p00.y+mP.helliWidth*1.2, mP.p00.z);
+		 phC.setXYZ( phB.x+1.25*( phF.x- phB.x),  phB.y+1.25*( phF.y- phB.y),  phB.z+1.25*( phF.z- phB.z));
+		 phCenter.setXYZ(( p1.x+ p2.x)/2, ( p1.y+ p2.y)/2, ( p1.z+ p2.z)/2);
 	
 	}
 

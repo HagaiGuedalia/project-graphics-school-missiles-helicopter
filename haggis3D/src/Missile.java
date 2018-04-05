@@ -26,6 +26,9 @@ public class Missile extends Thread
 	boolean exists;
 	int existsTime, missileNum, waitSet, waitTime;
 	
+	double prevRotateAngleY, prevRotateAngleZ;
+	
+	
 	Random rand;
 	double randomAccuracy;
 	int randomDirection;
@@ -54,6 +57,9 @@ public class Missile extends Thread
 		
 		 exists = false;
 		 color = new Color(255, 0, 0);
+		 
+		 prevRotateAngleY=0.0;
+		 prevRotateAngleZ=0.0;
 	}
 
 //	public void buildShape(double x, double y, double z, double dz, Matrix3DForStu mati)	
@@ -244,6 +250,9 @@ public class Missile extends Thread
 				speed = 4;
 		}
 		
+	
+		
+		
 		if(tik % callibrate ==0 )
 		{
 			
@@ -251,33 +260,66 @@ public class Missile extends Thread
 			randomDirection = (rand.nextInt(3) + 1);
 			//System.out.println("random " + randomDirection);
 
+
+			double dx = pW.x;
 			if(randomDirection==1)
-				pwx=pW.x/sum*speed*randomDirection;	
-			else 
-				pwx=pW.x/sum*speed;
-			
+				dx = dx*randomDirection;
+			pwx=dx/sum*speed;
+
+			double dy = pW.y;
 			if(randomDirection==2)
-				pwy=pW.y/sum*speed*randomDirection;
-			else 
-				pwy=pW.y/sum*speed;
-
+				dy = dy*randomDirection;
+			pwy=dy/sum*speed;
+			
+			double dz = pW.z;
 			if(randomDirection==3)
-				pwz=pW.z/sum*speed*randomDirection;
-			else 
-				pwz=pW.z/sum*speed;
+				dz = dz*randomDirection;
+			pwz=dz/sum*speed;
 
 			
+//			if(randomDirection==1)
+//				pwx=pW.x/sum*speed*randomDirection;	
+//			else 
+//				pwx=pW.x/sum*speed;
+//			
+//			if(randomDirection==2)
+//				pwy=pW.y/sum*speed*randomDirection;
+//			else 
+//				pwy=pW.y/sum*speed;
+//
+//			if(randomDirection==3)
+//				pwz=pW.z/sum*speed*randomDirection;
+//			else 
+//				pwz=pW.z/sum*speed;
+
+			
+			double rotateAngleY = Math.atan2(dz, dx);
+			double rotateAngleZ = Math.atan2(dy, dx);
+			
+
+			matiMissile.setMatRotateFixY(pmMc.x, pmMc.z, rotateAngleY-prevRotateAngleY);
+			this.mullMat();
+			matiMissile.setIdentity();
+			matiMissile.setMatRotateFixZ(pmMc.x, pmMc.y, rotateAngleZ-prevRotateAngleZ);
+			this.mullMat();
+			matiMissile.setIdentity();
+			
+			prevRotateAngleY=rotateAngleY;
+			prevRotateAngleZ=rotateAngleZ;
 		}
 		
 		
-	}	
+	}
+	
 	public boolean ifHit()
 	{
-		return (Math.abs(pW.x) <=myPanel.deathDistance && Math.abs(pW.y) <=myPanel.deathDistance && Math.abs(pW.z) <=myPanel.deathDistance);
+		return (myPanel.calcVec(pW) < myPanel.deathDistance);
+		//return (Math.abs(pW.x) <=myPanel.deathDistance && Math.abs(pW.y) <=myPanel.deathDistance && Math.abs(pW.z) <=myPanel.deathDistance);
 	}
 	public boolean isHIt(double deathDistance)
 	{
-	   	return (Math.abs(pW.x) <=deathDistance && Math.abs(pW.y) <=deathDistance && Math.abs(pW.z) <=deathDistance );
+		return (myPanel.calcVec(pW) < deathDistance);
+	   //	return (Math.abs(pW.x) <=deathDistance && Math.abs(pW.y) <=deathDistance && Math.abs(pW.z) <=deathDistance );
 
 	}
 	public boolean ifCrash(Missile miss)

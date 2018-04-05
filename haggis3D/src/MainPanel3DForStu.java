@@ -15,16 +15,17 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
+//fix - calcvec, distance and death 
+
 // remove missiles after they die
 //send to teacher: send the zipped file
 public class MainPanel3DForStu extends JPanel
 {
 		Thread thread;
 		Matrix3DForStu matiProp=new Matrix3DForStu();
-		Matrix3DForStu matiFastMissile=new Matrix3DForStu();
 		Matrix3DForStu mati=new Matrix3DForStu();
 		
-		Point3D p00, p3, magoz;
+		Point3D p00, magoz;
 		double wSmall;
 		double deathDistance=60;
 		
@@ -34,7 +35,6 @@ public class MainPanel3DForStu extends JPanel
 		Hellicopter hellicopter, mabatHellicopter;
 		Sevivon sevivon;
 		Missile missile;
-		Color missileColor;
 		Font myFont=new Font("tahoma",Font.LAYOUT_LEFT_TO_RIGHT,15);
 		Font death=new Font("tahoma",Font.LAYOUT_LEFT_TO_RIGHT,90);
 		int minutes = 0;
@@ -75,7 +75,6 @@ public class MainPanel3DForStu extends JPanel
 			page.drawString("Helli :  "+hellicopter.p1,550,100);
 			page.drawString("tik  "+tik,550,130);
 			
-			
 			if(crashtime>0)
 			{
 				page.drawString("crash", 50,550);
@@ -93,36 +92,31 @@ public class MainPanel3DForStu extends JPanel
 						page.drawString("gas "+miss.missileNum+"- "+(int)miss.currentGas, 50, 20+50*miss.missileNum*2);
 						page.drawString("speed "+miss.missileNum+"- "+(int)miss.speed  , 50, 40+50*miss.missileNum*2);
 
-//						if(miss.currentGas <= miss.gasTank/4)
-//						{
-//							page.drawString("gas < "+miss.gasTank/4,50,230);
-//					
-//						}
+						int xInt=(int)(miss.pmMc.x*(magoz.z/(magoz.z+miss.pmMc.z))+magoz.x);
+						int yInt=(int)(miss.pmMc.y*(magoz.z/(magoz.z+miss.pmMc.z))+magoz.y);
+						page.drawString(""+miss.missileNum, xInt, yInt-10);
+
 					}else{
 						page.drawString("wait "+miss.missileNum+"- "+miss.waitTime,50, 60+50*miss.missileNum*2);
 					}
 				}
 			}
 
-
 			page.drawString("time  "+minutes,300,50);
-			page.drawString(":"+seconds,345,50);
-			if(seconds==0)
-				page.drawString(""+seconds,358,50);
-			page.drawString(":"+miliSeconds,365,50);
+			page.drawString(":"+(seconds<10?  "0":"")+seconds,345,50);
+			page.drawString(":"+(miliSeconds<10?  "0":"")+miliSeconds,365,50);
 
-
-			sevivon.fromPointToGuf();
-			sevivon.convertAndShow(page);
-			
-			sevivon2.fromPointToGuf();
-			sevivon2.convertAndShow(page);
-			
+//
+//			sevivon.fromPointToGuf();
+//			sevivon.convertAndShow(page);
+//			
+//			sevivon2.fromPointToGuf();
+//			sevivon2.convertAndShow(page);
+//			
 			hellicopter.fromPointToGuf();
 			hellicopter.convertAndShow(page);
 			
 			
-			int ii=0;
 			synchronized (object) 
 			{
 				for (Missile miss : missileList) 
@@ -135,6 +129,7 @@ public class MainPanel3DForStu extends JPanel
 			}
 			synchronized (object) 
 			{
+				int ii=0;
 				for (Missile miss : mabatMissileList) 
 				{
 					if (miss.exists){ 
@@ -156,7 +151,6 @@ public class MainPanel3DForStu extends JPanel
 						{
 							page.setFont(death);
 							page.drawString("you blew up, bummer",50,550);
-
 						}
 						for (Missile miss2 : missileList) 
 						{
@@ -215,70 +209,42 @@ public class MainPanel3DForStu extends JPanel
 
 		public void biuldElem()
 		{
-			
 			p00 = new Point3D();
-			p3 = new Point3D();
+			magoz = new Point3D();
 			
-			magoz = new Point3D();		
 			p00.setXYZ(0, 0, 10000);
 			
-			missileColor = new Color(255, 0, 0);
-
-		    Dimension d= Toolkit.getDefaultToolkit().getScreenSize();
-			
+		    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();	
 			
 			magoz.setXYZ(d.getWidth()/2, d.getHeight()/3, 5000);
 			
-			
 			hellicopter= new Hellicopter(magoz, this);
 			mabatHellicopter= new Hellicopter(magoz, this);
-
-			hellicopter.p1.setXYZ(p00.x, p00.y, p00.z);
-			hellicopter.p2.setXYZ(p00.x, p00.y+150, p00.z);
-			hellicopter.phB.setXYZ(p00.x-70*2.85/2-70/2+helliWidth*0.28, p00.y+helliWidth*1.2, p00.z);
-			hellicopter.phF.setXYZ(p00.x-70*2.85/2-70/2+helliWidth*2.9, p00.y+helliWidth*1.2, p00.z);
-			hellicopter.phC.setXYZ(hellicopter.phB.x+1.25*(hellicopter.phF.x-hellicopter.phB.x), hellicopter.phB.y+1.25*(hellicopter.phF.y-hellicopter.phB.y), hellicopter.phB.z+1.25*(hellicopter.phF.z-hellicopter.phB.z));
-			hellicopter.phCenter.setXYZ((hellicopter.p1.x+hellicopter.p2.x)/2, (hellicopter.p1.y+hellicopter.p2.y)/2, (hellicopter.p1.z+hellicopter.p2.z)/2);
-			
-			sevivon=new Sevivon(magoz);
-			sevivon2=new Sevivon(magoz);
-			
-			
-
-
-		
+	
 			hellicopter.buildShape(p00.x, p00.y, p00.z, helliWidth);
 			
-			addMissile1(p00.x-1100, p00.y, p00.z);
-//			addFastMissile(p00.x-1100, p00.y, p00.z);
-//			addNormalMissile(p00.x-1100, p00.y, p00.z);
+			addMissile1(p00.x-1100, p00.y-500, p00.z);
+			//addFastMissile(p00.x-1100, p00.y+500, p00.z);
+			addNormalMissile(p00.x-1100, p00.y, p00.z);
 			
-
+//			sevivon=new Sevivon(magoz);
+//			sevivon2=new Sevivon(magoz);
+//		
 //			sevivon.buildShape(miss.pmMl.x, miss.pmMc.y, miss.pmMc.z, 50);
 //			sevivon.buildShape(200, 200, 200, 200);
 //
 //			sevivon2.buildShape(miss.pmMr.x,  miss.pmF.y, miss.pmF.z, 10);
 
-
-			
-//			missile = new Missile(magoz, this);
-//			missile.color= Color.red;
-//			missile.gasTank = 500;
-//			missile.currentGas = missile.gasTank;
-//			missile.buildShape(p00.x-900, p00.y-500, p00.z+1000, helliWidth/2.5, 0);
-//			missile.rangeSpeedCallibrate(0.6, 50, 60);
-//			mabatMissileList.add(missile);
 			synchronized (object) 
 			{
 				for (Missile miss : mabatMissileList) {
 					miss.matiMissile.setMatRotateFixX(hellicopter.p1.z, hellicopter.p1.y, Math.PI/2);
 				}
-			}
-	
-			
+			}			
 		}
-		//you can take out the color factor if you calculate the color according to the speed
-		public void addMissile(double x, double y, double z, double width, Color color, int changeWidth, int gasTank, double randomRange, int speed, int callibrate, int waitSet) 
+		
+		//add: missile depth
+		public void addMissile(double x, double y, double z, double width, int changeWidth, int gasTank, double randomRange, int speed, int callibrate, int waitSet) 
 		{
 			amountOfMissiles++;
 			
@@ -287,7 +253,6 @@ public class MainPanel3DForStu extends JPanel
 			missile.existsTime = 0*amountOfMissiles;
 			int minSpeed=32, maxSpeed=70;
 			missile.color= new Color((int) 255/(maxSpeed-minSpeed)*(speed-minSpeed), 50, 150);
-			//missile.color= new Color( 225-speed, (int) (speed*2), 225-speed);
 			missile.gasTank = gasTank;
 			missile.currentGas = missile.gasTank;
 			missile.waitSet=waitSet;
@@ -298,7 +263,7 @@ public class MainPanel3DForStu extends JPanel
 			missile = new Missile(magoz, this);
 			missile.existsTime = 300*amountOfMissiles;
 			//missile.exists=true;
-			missile.color= color;
+			missile.color= new Color((int) 255/(maxSpeed-minSpeed)*(speed-minSpeed), 50, 150);
 			missile.gasTank = gasTank;
 			missile.currentGas = missile.gasTank;
 			missile.waitSet=waitSet;
@@ -307,26 +272,24 @@ public class MainPanel3DForStu extends JPanel
 			mabatMissileList.add(missile);
 
 			//mabatMissileList.add(missile);
-			
-
 		}
-		
-		
-		public void addMissile1(double x, double y, double z) 
+		public double calcVec(Point3D t) 
 		{
-			
-			addMissile(x, y, z, helliWidth/2.5, Color.pink, 0, 1000, 0.2, 32, 40, 400);
+			return Math.sqrt(t.x*t.x+t.y*t.y+t.z+t.z);
+		}
+		public void addMissile1(double x, double y, double z) 
+		{	
+			addMissile(x, y, z, helliWidth/2.5, 0, 1000, 0.2, 32, 40, 400);
 		}
 		
 		public void addNormalMissile(double x, double y, double z) 
-		{
-			
-			addMissile(x, y, z, helliWidth/2.5, Color.gray, 0, 500, 0.6, 50, 60, 300);
+		{		
+			addMissile(x, y, z, helliWidth/2.5, 0, 500, 0.6, 50, 60, 300);
 		}
 	
 		public void addFastMissile(double x, double y, double z) 
 		{
-			addMissile(x, y, z, helliWidth/2.5, Color.black, 20, 900, 0.7, 70, 80, 200);
+			addMissile(x, y, z, helliWidth/2.5, 20, 900, 0.7, 70, 80, 200);
 		}
 		
 			
@@ -535,20 +498,47 @@ public class MainPanel3DForStu extends JPanel
 				break;
 				
 			case 'q':
-				
 				synchronized (object) 
 				{
 					for (Missile miss : missileList) 					
 					{
-						 if (miss.exists)
-						 { 
-							 //moveAllMissiles(miss.pwx * 1.6, miss.pwy * 1.6, miss.pwz * 1.6, miss);
-							 calcCos(miss, miss.pmMc, hellicopter.phCenter, miss.pmMr, miss.pmMl);
-							//miss.matiMissile.setMatRotateAxis(miss.pmF.x, miss.pmF.y, miss.pmF.z, miss.pmF.x-10, miss.pmF.y-0.00001, miss.pmF.z, Math.PI/10); //rotate missile vertically !!
-
-						 }
+						if (miss.exists)
+						{ 
+							miss.matiMissile.setMatRotateAxis(miss.pmMc.x, miss.pmMc.y, miss.pmMc.z,miss.pmF.x, miss.pmF.y, miss.pmF.z, Math.PI/20);
+							//miss.mullMat();
+							//miss.matiMissile.setIdentity();
+						}
 					}
 				}	
+
+				
+//				hellicopter.matiRotate.setMatRotateFixX(hellicopter.hellibody.zReal[3], hellicopter.hellibody.yReal[3],Math.PI/20);
+//				synchronized (object) 
+//				{
+//					for (Missile miss : missileList) 					
+//					{
+//						 if (miss.exists)
+//						 { 
+//							 miss.matiMissile.setMatRotateFixX(hellicopter.hellibody.zReal[3], hellicopter.hellibody.yReal[3],Math.PI/20);
+//							 miss.currentGas++;
+//						 }
+//					}
+//				}
+				
+//				synchronized (object) 
+//				{
+//					for (Missile miss : missileList) 					
+//					{
+//						 if (miss.exists)
+//						 { 
+//							 //moveAllMissiles(miss.pwx * 1.6, miss.pwy * 1.6, miss.pwz * 1.6, miss);
+//							 
+//							 //calcCos(miss, miss.pmMc, hellicopter.phCenter, miss.pmMr, miss.pmMl);
+//							//miss.matiMissile.setMatRotateAxis(miss.pmF.x, miss.pmF.y, miss.pmF.z, miss.pmF.x-10, miss.pmF.y-0.00001, miss.pmF.z, Math.PI/10); //rotate missile vertically !!
+//
+//						 }
+//					}
+//				}	
 				//explosion();
 				prepareToShowAndRepaint();
 
@@ -696,40 +686,62 @@ public class MainPanel3DForStu extends JPanel
 	    
 	    
 	    
-	    int tik =0;
+	    int tik = 0;
 			
-		
-		
-	    
 		public void prepareToShowAndRepaint()
 		{
-			sevivon.mullMat(mati);
-			sevivon2.mullMat(mati);
+			// Time
+			miliSeconds++;
+			if(miliSeconds==100)
+			{
+				seconds++;
+				miliSeconds=0;
+				if(seconds==60)
+				{
+					minutes++;
+					seconds=0;
+				}
+			}
+	
+
+//			sevivon.mullMat(mati);
+//			sevivon2.mullMat(mati);
 			
 //			if(tik % 600  == 0)
 //			{
 //				addFastMissile(hellicopter.p1.x+500, hellicopter.p1.y+500, hellicopter.p1.z+500);
-//			}else if(tik % 200  == 0)
+//			}
+//			else if(tik % 200  == 0)
 //			{
 //				addNormalMissile(hellicopter.p1.x+500, hellicopter.p1.y+500, hellicopter.p1.z+500);
 //			}
+			
 			synchronized (object) 
 			{
 				for (Missile miss : missileList) 
 				{
 					if(miss.existsTime==tik)
 						miss.exists=true;
+					if (miss.exists)
+					{
+						
+						miss.calcDistanceW();
+						miss.calcSum();
+						miss.calcDirection(tik);
+						miss.mullMat();
+					}
 				}
 				
 			}
 			
 			hellicopter.mullMat();
+			
+			//could add a function that changes mabat - miss.setExists(true/false)
 			synchronized (object) 
 			{
 				for (Missile miss : missileList) 
 				{	
 					if (miss.exists){ 
-						miss.mullMat();
 						for (Missile mMiss : mabatMissileList)
 						{ 
 							if (miss.missileNum==mMiss.missileNum)
@@ -747,92 +759,10 @@ public class MainPanel3DForStu extends JPanel
 			}
 
 			
-			
-//			if(pW.x != 0)
-//			{
-//				if(pW.y != 0)
-//				{
-//					if(pW.z != 0)
-//					{  // if none equal 0
-//						wSmall=Math.min(Math.min (Math.abs(pW.x), Math.abs(pW.y)), Math.abs(pW.z));
-//
-//					}else{         // if only z equal 0
-//						wSmall=Math.min(Math.abs(pW.x), Math.abs(pW.y));
-//					}
-//				}else{
-//					if(pW.z != 0){  // if only y equal 0
-//						wSmall=Math.min(Math.abs(pW.x), Math.abs(pW.z));
-//					}else{         // if y and z equal 0
-//						wSmall=pW.x;
-//					}
-//				}
-//			}else{
-//				if(pW.y != 0){
-//					if(pW.z != 0){ // if only x equals 0
-//						wSmall=Math.min(Math.abs(pW.y), Math.abs(pW.z));
-//					}else{         //if x and z equal 0
-//						wSmall = pW.y;
-//					}
-//				}else{             // if x and y equal 0 
-//					if(pW.z != 0)
-//						wSmall = pW.z;
-//				}
-//			}
-			
-			if(miliSeconds==100)
-			{
-				seconds++;
-				miliSeconds=0;
-				if(seconds==60)
-				{
-					minutes++;
-					seconds=0;
-				}
-			}
-			
-			miliSeconds++;
-			
-			Random rand = new Random();
-
-			//double  randomAccuracy = (rand.nextInt(20) + 90)/100;
-			
-//			double randomAccuracy;
-//			int randomDirection;
-			double fastrandomAccuracy;
-			int fastrandomDirection;
-			
-			//missile.pW.setXYZ((p1.x+p2.x)/2-(missile.pmF.x), (p1.y+p2.y)/2-(missile.pmF.y), (p1.z+p2.z)/2-(missile.pmF.z));
-			
-			synchronized (object) 
-			{
-				for (Missile miss : missileList) 
-				{
-					if (miss.exists)
-					{ 
-						miss.calcDistanceW();
-						miss.calcSum();
-						miss.calcDirection(tik);
-					}
-
-				}
-			}
-			
-			
-
-			
 			/*
-			* gas!!
-			* 
-			*  you can also add a random in so it wont know exact direction
-			*  
-			*		for different missile you can play with different variables; 	speed, accuracy, update frequency		    maybe 2 good 1 bad ||  1 good 2 bad  || 3 bad
-			*			faster missile updates less,   
-			*					
 			*
-			*	also penalize missile for turning, take off a bit of speed
+			*	penalize missile for turning, take off a bit of speed
 			*	
-			
-			*
 			*/
 			
 			
@@ -930,6 +860,6 @@ public class MainPanel3DForStu extends JPanel
 		}
 
 		
-	}
+}
 
 
