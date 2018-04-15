@@ -20,7 +20,7 @@ public class Missile extends Thread
 	Color color;
 	Point3D pmT, pmB, pmF, pW, pmMr, pmMl, pmMc;
 	double wSmall, pwx, pwy, pwz;
-	double randomRange, speed, sum;
+	double randomRange, speed, sum, spin;
 	double origSpeed;
 	int gasTank, currentGas, callibrate;
 	boolean exists;
@@ -151,7 +151,8 @@ public class Missile extends Thread
 		pmT.setXYZ(missilebody.xReal[0], missilebody.yReal[1], missilebody.zReal[8]);
 		pmF.setXYZ(missilebody.xReal[8], missilebody.yReal[8], missilebody.zReal[8]);
 		pmB.setXYZ(missilebody.xReal[0], missilebody.yReal[0], missilebody.zReal[8]);
-		pW.setXYZ((myPanel.hellicopter.p1.x+myPanel.hellicopter.p2.x)/2-(pmF.x), (myPanel.hellicopter.p1.y+myPanel.hellicopter.p2.y)/2-(pmF.y), (myPanel.hellicopter.p1.z+myPanel.hellicopter.p2.z)/2-(pmF.z));	
+		pW.setXYZ((myPanel.hellicopter.phCenter.x-pmF.x), (myPanel.hellicopter.phCenter.y-pmF.y), (myPanel.hellicopter.phCenter.z-pmF.z));
+		System.out.println("**pmF in -  "+ pmF);
 		pmMr.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[0])/3, pmF.y, missilebody.zReal[0]);
 //		pmMl.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[4])/3, pmF.y, missilebody.zReal[4]);
 		pmMl.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[4])/3, pmF.y, missilebody.zReal[4]);
@@ -208,7 +209,7 @@ public class Missile extends Thread
 		pmT.setXYZ(missilebody.xReal[0], missilebody.yReal[1], missilebody.zReal[8]);
 		pmF.setXYZ(missilebody.xReal[8], missilebody.yReal[8], missilebody.zReal[8]);
 		pmB.setXYZ(missilebody.xReal[0], missilebody.yReal[0], missilebody.zReal[8]);
-		pW.setXYZ((myPanel.hellicopter.p1.x+myPanel.hellicopter.p2.x)/2-(pmF.x), (myPanel.hellicopter.p1.y+myPanel.hellicopter.p2.y)/2-(pmF.y), (myPanel.hellicopter.p1.z+myPanel.hellicopter.p2.z)/2-(pmF.z));	
+		pW.setXYZ(myPanel.hellicopter.phCenter.x-(pmF.x), myPanel.hellicopter.phCenter.y-(pmF.y), myPanel.hellicopter.phCenter.z-(pmF.z));	
 		
 		pwx=0;
 		pwy=0;
@@ -216,16 +217,9 @@ public class Missile extends Thread
 	
 	}
 	
-	
-	public void rangeSpeedCallibrate(double randomRange, double speed, int callibrate){
-		this.randomRange=randomRange;
-		this.speed=speed;
-		this.callibrate=callibrate;
-	}
-	
 	public void calcDistanceW()
 	{
-		pW.setXYZ((myPanel.hellicopter.p1.x+myPanel.hellicopter.p2.x)/2-(pmF.x), (myPanel.hellicopter.p1.y+myPanel.hellicopter.p2.y)/2-(pmF.y), (myPanel.hellicopter.p1.z+myPanel.hellicopter.p2.z)/2-(pmF.z));
+		pW.setXYZ(myPanel.hellicopter.phCenter.x-(pmF.x), myPanel.hellicopter.phCenter.y-(pmF.y), myPanel.hellicopter.phCenter.z-(pmF.z));
 	}
 	public void calcSum()
 	{
@@ -293,19 +287,19 @@ public class Missile extends Thread
 //				pwz=pW.z/sum*speed;
 
 			
-			double rotateAngleY = Math.atan2(dz, dx);
-			double rotateAngleZ = Math.atan2(dy, dx);
-			
-
-			matiMissile.setMatRotateFixY(pmMc.x, pmMc.z, rotateAngleY-prevRotateAngleY);
-			this.mullMat();
-			matiMissile.setIdentity();
-			matiMissile.setMatRotateFixZ(pmMc.x, pmMc.y, rotateAngleZ-prevRotateAngleZ);
-			this.mullMat();
-			matiMissile.setIdentity();
-			
-			prevRotateAngleY=rotateAngleY;
-			prevRotateAngleZ=rotateAngleZ;
+//			double rotateAngleY = Math.atan2(dz, dx);
+//			double rotateAngleZ = Math.atan2(dy, dx);
+//			
+//			matiMissile.setMatRotateFixY(pmMc.x, pmMc.z, rotateAngleY-prevRotateAngleY);
+//			this.mullMat();
+//			matiMissile.setIdentity();
+//			matiMissile.setMatRotateFixZ(pmMc.x, pmMc.y, rotateAngleZ-prevRotateAngleZ);
+//			this.mullMat();
+//			matiMissile.setIdentity();
+//			
+//			prevRotateAngleY=rotateAngleY;
+//			prevRotateAngleZ=rotateAngleZ;
+//	
 		}
 		
 		
@@ -313,18 +307,21 @@ public class Missile extends Thread
 	
 	public boolean ifHit()
 	{
-		return (myPanel.calcVec(pW) < myPanel.deathDistance);
+		return (myPanel.calcVec(pW) <= myPanel.deathDistance);
 		//return (Math.abs(pW.x) <=myPanel.deathDistance && Math.abs(pW.y) <=myPanel.deathDistance && Math.abs(pW.z) <=myPanel.deathDistance);
 	}
 	public boolean isHIt(double deathDistance)
 	{
-		return (myPanel.calcVec(pW) < deathDistance);
+		return (myPanel.calcVec(pW) <= deathDistance);
 	   //	return (Math.abs(pW.x) <=deathDistance && Math.abs(pW.y) <=deathDistance && Math.abs(pW.z) <=deathDistance );
 
 	}
 	public boolean ifCrash(Missile miss)
 	{
-		return (Math.abs(miss.pmF.x-this.pmF.x) <=myPanel.deathDistance && Math.abs(miss.pmF.y-this.pmF.y) <=myPanel.deathDistance && Math.abs(miss.pmF.z-this.pmF.z) <=myPanel.deathDistance);
+		Point3D vec = new Point3D();
+		vec.setXYZ((miss.pmF.x-this.pmF.x), (miss.pmF.y-this.pmF.y), (miss.pmF.z-this.pmF.z));
+		return (myPanel.calcVec(vec)<=myPanel.deathDistance);
+	//	return (Math.abs(miss.pmF.x-this.pmF.x) <=myPanel.deathDistance && Math.abs(miss.pmF.y-this.pmF.y) <=myPanel.deathDistance && Math.abs(miss.pmF.z-this.pmF.z) <=myPanel.deathDistance);
 	}
 	
 

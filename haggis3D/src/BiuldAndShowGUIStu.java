@@ -230,36 +230,55 @@ public class BiuldAndShowGUIStu extends JToolBar implements ActionListener ,KeyL
 		case 'p':
 			smaller.doClick() ;
 			break;
-		//	
-		case 'j':
-			mP.moveAni('j');
-			break;
-
-		case 'l':
-			mP.moveAni('l');
+		
+		case '1':
+			matsav=state.RUN;
+			run.setEnabled(false);
+			pause.setEnabled(true);
+			stop.setEnabled(true);
+			mP.startAnimaition();			
 			break;
 			
-		case 'i':
-			mP.moveAni('i');
+		case '2':
+			matsav=state.READEY;
+			run.setEnabled(true);
+			pause.setText("  pause ");
+			pause.setEnabled(false);
+			stop.setEnabled(false);
+			mP.stopAnimation();		
 			break;
-
-		case 'k':
-			mP.moveAni('k');
-			break;
-
-		case 'r':
-			mP.moveAni('r');
-			break;
-		
-		case 'q':
-			mP.moveAni('q');
-			break;
+			
+			//		case 'j':
+//			mP.moveAni('j');
+//			break;
+//
+//		case 'l':
+//			mP.moveAni('l');
+//			break;
+//			
+//		case 'i':
+//			mP.moveAni('i');
+//			break;
+//
+//		case 'k':
+//			mP.moveAni('k');
+//			break;
+//
+//		case 'r':
+//			mP.moveAni('r');
+//			break;
+//		
+//		case 'q':
+//			mP.moveAni('q');
+//			break;
 			
 		default:
+			mP.moveAni(ch);
 			break;
 		}
 	}
 	
+
 
 	public void actionPerformed (ActionEvent event)
 	{
@@ -293,11 +312,11 @@ public class BiuldAndShowGUIStu extends JToolBar implements ActionListener ,KeyL
 			mP.rotateAxisLeft();
 		else if (now==rotateAxisRight)
 			mP.rotateAxisRight();
-		
 		else if (now==bigger)
 			mP.bigger();
 		else if (now==smaller)
 			mP.smaller();
+		
 		
 		
 		else if (now==run)
@@ -333,7 +352,24 @@ public class BiuldAndShowGUIStu extends JToolBar implements ActionListener ,KeyL
 
 	public void keyPressed(KeyEvent arg0) 
 	{
-		// TODO Auto-generated method stub
+		if (arg0.isActionKey())
+		{
+			switch (arg0.getKeyCode()) 
+			{
+			case 37:  	 
+				mP.rotateAxisLeft() ;
+			    break;
+			case 38:  	 
+				mP.rotateXFixUp();
+			   break;
+			case 39:  	 
+				mP.rotateAxisRight() ;
+			   break;
+			case 40:  	 
+				mP.rotateXFixDown();
+			   break;
+			}
+		}	
 	}
 
 	public void keyReleased(KeyEvent arg0) 

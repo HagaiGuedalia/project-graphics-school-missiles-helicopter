@@ -14,7 +14,6 @@ public class Hellicopter
 	HelliProp helliprop4;
 
 	Matrix3DForStu mati; 
-	Matrix3DForStu matiRotate; 
 
 	MainPanel3DForStu mP;
 
@@ -33,7 +32,6 @@ public class Hellicopter
 		 helliprop4=new HelliProp(magoz);
 		 
 		 mati=new Matrix3DForStu(); 
-		 matiRotate=new Matrix3DForStu(); 
 		 
 		 p1 = new Point3D();
 		 p2 = new Point3D();
@@ -206,30 +204,9 @@ public class Hellicopter
 		phF.mullMat(mati);
 		phC.mullMat(mati);
 		phCenter.mullMat(mati);
-		mullMatRotate();
 	}	
 		
-	public void mullMatRotate(){
 	
-		hellibody.mullMat(matiRotate);
-		helliStick.mullMat(matiRotate);
-		hellitail.mullMat(matiRotate);
-
-		helliprop1.mullMat(matiRotate);
-		helliprop2.mullMat(matiRotate);
-		helliprop3.mullMat(matiRotate);
-		helliprop4.mullMat(matiRotate);
-
-		p1.mullMat(matiRotate);
-		p2.mullMat(matiRotate);
-		phB.mullMat(matiRotate);
-		phF.mullMat(matiRotate);
-		phC.mullMat(matiRotate);
-		phCenter.mullMat(matiRotate);
-		
-		matiRotate.setIdentity();
-	}
-
 
 
 

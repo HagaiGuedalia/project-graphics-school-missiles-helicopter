@@ -20,8 +20,8 @@ public class Animation3DForStu extends Thread
 
 	public void run()
 	{
-		double missileSpeed=1.6;
-		double helliSpeed=1.26;
+		double helliSpeed=1.7; // 1.26
+		double missileSpeed=helliSpeed*2; //1.6     *1.26
 
 		int i;
 		myPanel.hellicopter.mati.setIdentity();
@@ -35,7 +35,7 @@ public class Animation3DForStu extends Thread
 				myPanel.stopAnimation();
 			}
 			myPanel.spinProp();
-			
+			myPanel.hellicopter.mullMat();
 					myPanel.hellicopter.mati.setIdentity();
 					//for all missiles
 					synchronized (myPanel.object) 
@@ -62,6 +62,11 @@ public class Animation3DForStu extends Thread
 					myPanel.moveAllMissiles(miss.pwx * missileSpeed, miss.pwy
 							* missileSpeed, miss.pwz * missileSpeed, miss);
 					//myPanel.rotateMissile(miss);
+					miss.mullMat();
+//					miss.matiMissile.setMatRotateAxis(miss.pmMc.x, miss.pmMc.y, miss.pmMc.z,miss.pmF.x, miss.pmF.y, miss.pmF.z, Math.PI/10);
+					miss.matiMissile.setMatRotateAxis(miss.pmMc.x, miss.pmMc.y, miss.pmMc.z,miss.pmF.x, miss.pmF.y, miss.pmF.z+0.0001, Math.PI/20);
+					miss.mullMat();
+
 					}
 				}
 			}

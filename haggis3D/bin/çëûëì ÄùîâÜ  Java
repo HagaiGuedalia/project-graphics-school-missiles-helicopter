@@ -1,0 +1,18 @@
+	public void keyPressed(KeyEvent arg0) 
+	{
+		if (arg0.isActionKey())
+		{
+			switch (arg0.getKeyCode()) 
+			{
+			case 37:  	 mP.moveLeft();
+			    break;
+			case 38:  	 mP.moveUp();
+			   break;
+			case 39:  	 mP.moveRight();
+			   break;
+			case 40:  	 mP.moveDown();
+			   break;
+			}
+		}
+	}
+

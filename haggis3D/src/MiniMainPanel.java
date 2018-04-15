@@ -59,7 +59,7 @@ public class MiniMainPanel extends JPanel
 			j=0;
 		}
 		g2d.setTransform(aT);
-		mP.mabatHellicopter.mullMatRotate();
+		mP.mabatHellicopter.mullMat();
 		mP.mabatHellicopter.fromPointToGuf();
 		mP.mabatHellicopter.convertAndShow(g2d);
 		
