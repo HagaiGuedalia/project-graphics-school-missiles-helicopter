@@ -2,7 +2,7 @@ import java.awt.Graphics;
 
 
 
-public class Hellicopter
+public class Hellicopter implements Comparable
 {
 	HelliBody hellibody;
 	HelliTail hellitail;
@@ -174,7 +174,7 @@ public class Hellicopter
 	
 	public void copy(Hellicopter other)
     {
-    	hellibody.copy(other.hellibody);
+		hellibody.copy(other.hellibody);
     	helliStick.copy(other.helliStick);
     	hellitail.copy(other.hellitail);
 
@@ -206,8 +206,36 @@ public class Hellicopter
 		phCenter.mullMat(mati);
 	}	
 		
-	
+	public double getMaxZ() 
+	{
+		double maxZ=hellibody.zReal[0];
+		for (int i = 0; i < hellibody.zReal.length; i++) {
+			if (hellibody.zReal[i]>maxZ)
+				maxZ=hellibody.zReal[i];
+		}		
+		return maxZ;
+	}
 
+	@Override
+	public int compareTo(Object other) 
+	{
+		if (other instanceof Missile)
+		{
+			if(getMaxZ()>((Missile)other).getMaxZ())
+				return -1;
+			else 
+				return 1;
+		}
+		if (other instanceof Hellicopter)
+		{
+			if(getMaxZ()>((Hellicopter)other).getMaxZ())
+				return -1;
+			else 
+				return 1;
+		}
+		
+		return 0;
+	}	
 
 
 

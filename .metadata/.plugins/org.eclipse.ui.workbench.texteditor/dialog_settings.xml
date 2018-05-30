@@ -2,37 +2,37 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="265" key="DIALOG_WIDTH"/>
-		<item value="311" key="DIALOG_Y_ORIGIN"/>
-		<item value="797" key="DIALOG_X_ORIGIN"/>
+		<item value="127" key="DIALOG_Y_ORIGIN"/>
 		<item value="373" key="DIALOG_HEIGHT"/>
+		<item value="728" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Tahoma|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Tahoma" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
+		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="sevivon" key="selection"/>
+		<item value="convertAndShow" key="selection"/>
 		<list key="findhistory">
-			<item value="sevivon"/>
-			<item value="mabatMissileList"/>
-			<item value="exists="/>
-			<item value="exists"/>
-			<item value="you"/>
-			<item value="hit"/>
-			<item value="for (Missile miss : missileList)"/>
-			<item value="for (Missile miss : missileList) {"/>
+			<item value="convertAndShow"/>
+			<item value="deathdistance"/>
+			<item value="missile"/>
+			<item value="System.out.println"/>
+			<item value="miss"/>
+			<item value="{}"/>
+			<item value="synchronized (object)"/>
+			<item value="synchronized (object) "/>
 		</list>
 		<list key="replacehistory">
+			<item value="miss"/>
+			<item value="missile"/>
+			<item value="{}"/>
+			<item value=""/>
+			<item value=" "/>
 			<item value="for (Missile miss : missileList) { if (miss.exists){"/>
 			<item value="for (Missile miss : missileList) {"/>
 			<item value="matiRotate"/>
-			<item value="hellicopter.p2."/>
-			<item value="hellicopter.p1."/>
-			<item value="hellicopter.mati."/>
-			<item value="hellicopter."/>
-			<item value="hellicopter.hellicopter."/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">

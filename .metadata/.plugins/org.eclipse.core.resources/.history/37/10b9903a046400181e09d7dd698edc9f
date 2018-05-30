@@ -1,0 +1,910 @@
+/*
+ * Created on Eiar 5767
+ * update Av 5768
+ * @author levian
+ * for me
+ */
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.lang.ref.PhantomReference;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.JPanel;
+
+//fix - calcvec, distance and death 
+
+// remove missiles after they die
+//send to teacher: send the zipped file
+public class MainPanel3DForStu extends JPanel
+{
+	Thread thread;
+	Matrix3DForStu matiProp=new Matrix3DForStu();
+	Matrix3DForStu mati=new Matrix3DForStu();
+
+	Point3D p00, magoz;
+	double wSmall;
+
+	Object object=new Object();
+
+
+	Hellicopter hellicopter, mabatHellicopter;
+	Sevivon sevivon;
+	Missile missile;
+	double deathDistance=100;
+	Font myFont=new Font("tahoma",Font.LAYOUT_LEFT_TO_RIGHT,15);
+	Font death=new Font("tahoma",Font.LAYOUT_LEFT_TO_RIGHT,90);
+	int minutes = 0;
+	int miliSeconds = 0;
+	int seconds = 0;
+	Sevivon sevivon2;
+
+	int crashtime=0;
+
+	ArrayList<Missile>  missileList= new ArrayList<Missile>();  
+	ArrayList<Missile>  mabatMissileList= new ArrayList<Missile>();  
+	int amountOfMissiles = 0;
+
+
+	int helliWidth = 70;
+	MiniMainPanel miniPanel;
+
+
+	public MainPanel3DForStu()
+	{
+		super();
+		setLayout(null);
+		miniPanel=new MiniMainPanel(this);
+		miniPanel.setVisible(true);
+		add(miniPanel);
+
+
+		setBackground(Color.WHITE);
+		biuldElem();
+	}
+
+	public void paintComponent (Graphics page)
+	{
+		super.paintComponent(page);
+		page.setFont(myFont);
+		//			basis.convertAndShow(page);//,depth,prespctivCenter,perspectiv);
+
+		page.drawString("Helli :  "+hellicopter.p1,550,100);
+		page.drawString("tik  "+tik,550,130);
+
+		if(crashtime>0)
+		{
+			page.drawString("crash", 50,550);
+			crashtime--;
+		}
+
+
+
+		for (Missile miss : missileList)
+		{	
+			if (miss.exists)
+			{  
+
+				//						page.drawString("gas "+miss.missileNum+"- "+(int)miss.currentGas, 50, 20+50*miss.missileNum*2);
+				page.drawString("distance "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z),50,50*miss.missileNum*2);
+				page.drawString("speed "+miss.missileNum+"- "+(int)miss.speed  , 50, 20+50*miss.missileNum*2);
+				//page.drawString("pmF "+miss.missileNum+"- "+miss.pmF.x  , 50, 60+50*miss.missileNum*2);
+				//						System.out.println("pmF-  "+ miss.pmF);
+				//						System.out.println("phcC-  "+hellicopter.phCenter);
+				//						System.out.println("pW-  "+miss.pW);
+				//System.out.println("distance-  "+"distance "+"- "+(int) Math.sqrt(missile.pW.x*missile.pW.x + missile.pW.y*missile.pW.y + missile.pW.z*missile.pW.z));
+
+				//						System.out.println("distance2 "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z));
+
+
+				int xInt=(int)(miss.pmMc.x*(magoz.z/(magoz.z+miss.pmMc.z))+magoz.x);
+				int yInt=(int)(miss.pmMc.y*(magoz.z/(magoz.z+miss.pmMc.z))+magoz.y);
+				page.drawString(""+miss.missileNum, xInt, yInt-10);
+				//						page.drawString(""+miss.prevRotateAngleY, xInt, yInt-30);
+				//						page.drawString(""+miss.prevRotateAngleZ, xInt, yInt-50);
+
+			}else{
+				page.drawString("wait "+miss.missileNum+"- "+miss.waitTime,50, 60+50*miss.missileNum*2);
+
+			}
+		}
+
+
+		page.drawString("time  "+minutes,300,50);
+		page.drawString(":"+(seconds<10?  "0":"")+seconds,345,50);
+		page.drawString(":"+(miliSeconds<10?  "0":"")+miliSeconds,365,50);
+
+
+		sevivon.fromPointToGuf();
+		sevivon.convertAndShow(page);
+
+		sevivon2.fromPointToGuf();
+		sevivon2.convertAndShow(page);
+
+		hellicopter.fromPointToGuf();
+		hellicopter.convertAndShow(page);
+
+
+
+		for (Missile miss : missileList) 
+		{
+			if (miss.exists){ 
+				miss.fromPointToGuf();
+				miss.convertAndShow(page);
+			}
+		}
+
+
+
+		int ii=0;
+		for (Missile miss : mabatMissileList) 
+		{
+			if (miss.exists){ 
+				miss.copy(missileList.get(ii++));  
+				miss.matiMissile.setMatRotateFixX(hellicopter.p1.z, hellicopter.p1.y, Math.PI/2);
+				miss.mullMat();
+			}
+		}
+
+
+		{
+			for (Missile miss : missileList) 
+			{
+				if (miss.exists)
+				{ 
+					if(miss.ifHit())
+					{
+						page.setFont(death);
+						page.drawString("you blew up, bummer",50,550);
+					}
+					for (Missile miss2 : missileList) 
+					{
+						if (miss2.exists)
+						{
+							if(miss.missileNum!=miss2.missileNum){
+								if(miss2.ifCrash(miss))
+								{
+									if(tik>50)
+									{										
+										crashtime=50;
+										//crash=true;
+										miss.exists=false;
+										miss2.exists=false;
+									}
+								}
+							}
+
+						}
+					}
+				}
+
+
+			}
+
+		}
+
+
+		//check between missile/helli
+		//			if (hellicopter.helliStick.zReal[0]<missile.missilebody.zReal[0]) 
+		//			{
+		//				missile.convertAndShow(page);
+		//				hellicopter.convertAndShow(page);
+		//			}
+		//			else{
+		//			
+		//				hellicopter.convertAndShow(page);
+		//				missile.convertAndShow(page);
+		//			}
+
+		mabatHellicopter.copy(hellicopter);
+		//mabatHellicopter.mat0i=mabatHellicopter.mati;
+		//miniPanel.mati.setMatRotateFixX(hellicopter.p1.z, hellicopter.p1.y, Math.PI/2);
+		mabatHellicopter.mati.setMatMove(p00.x-mabatHellicopter.phCenter.x, p00.y-mabatHellicopter.phCenter.y, p00.z-mabatHellicopter.phCenter.z);
+		mabatHellicopter.mati.setMatRotateFixX(hellicopter.p1.z, hellicopter.p1.y, Math.PI/2);
+		//			miniPanel.repaint();
+
+
+	}
+
+	public void biuldElem()
+	{
+		p00 = new Point3D();
+		magoz = new Point3D();
+
+		p00.setXYZ(0, 0, 10000);
+
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();	
+
+		magoz.setXYZ(d.getWidth()/2, d.getHeight()/3, 2000);
+
+		hellicopter= new Hellicopter(magoz, this);
+		mabatHellicopter= new Hellicopter(magoz, this);
+
+		hellicopter.buildShape(p00.x, p00.y, p00.z, helliWidth*3);
+
+//		addMissile1(p00.x-900, p00.y-500, p00.z-9000);
+//		addMissile2(p00.x+100, p00.y-600, p00.z-13000);
+//		addMissile3(p00.x-1200, p00.y-600, p00.z+13000);			
+//		addFastMissile(p00.x-1100, p00.y+500, p00.z+5000);
+//		addNormalMissile(p00.x+2100, p00.y, p00.z);
+		addMissile1(-100, 0, 10000);
+//		addMissile1(0, -100, 10000);
+		//			
+		sevivon=new Sevivon(magoz);
+		sevivon2=new Sevivon(magoz);
+
+		//			sevivon.buildShape(hellicopter.phCenter.x, hellicopter.phCenter.y, hellicopter.phCenter.z, 50);
+		//sevivon2.buildShape(miss.pmMr.x,  miss.pmF.y, miss.pmF.z, 10);
+
+
+
+		//				for (Missile miss : missileList){
+		//					sevivon.buildShape(miss.pmF.x,  miss.pmF.y, miss.pmF.z, 10);
+		//				}
+		for (Missile miss : mabatMissileList) {
+			//	miss.matiMissile.setMatRotateFixX(hellicopter.p1.z, hellicopter.p1.y, Math.PI/2);
+
+		}
+
+	}
+
+	//add: missile depth
+	public void addMissile(double x, double y, double z, double width, int changeWidth, int gasTank, double randomRange, int speed, int callibrate, int waitSet) 
+	{
+		amountOfMissiles++;
+
+		missile = new Missile(magoz, this);
+		//missile.exists=true;
+		missile.existsTime = 100*amountOfMissiles-100;
+		int minSpeed=32, maxSpeed=70;
+		missile.color= new Color((int) 255/(maxSpeed-minSpeed)*(speed-minSpeed), 50, 150);
+		missile.gasTank = gasTank;
+		missile.currentGas = missile.gasTank;
+		missile.waitSet=waitSet;
+		missile.spin=Math.PI-Math.PI/(speed*2);
+		missile.missileNum=amountOfMissiles;
+		missile.buildShape(x, y, z, width+callibrate/6, gasTank/20, randomRange, speed*1.3, callibrate);
+		missileList.add(missile);
+		
+
+		missile = new Missile(magoz, this);
+		//missile.exists=true;
+		missile.existsTime = 100*amountOfMissiles-100;
+		missile.color= new Color((int) 255/(maxSpeed-minSpeed)*(speed-minSpeed), 50, 150);
+		missile.gasTank = gasTank;
+		missile.currentGas = missile.gasTank;
+		missile.waitSet=waitSet;
+		missile.spin=Math.PI-Math.PI/(speed*2);
+		missile.missileNum=amountOfMissiles;
+		missile.buildShape(x, y, z, width+callibrate/6, gasTank/20, randomRange, speed*1.3, callibrate);
+		mabatMissileList.add(missile);
+		//mabatMissileList.add(missile);
+	}
+	public double calcVec(Point3D t) 
+	{
+		return Math.sqrt(t.x*t.x+t.y*t.y+t.z*t.z);
+	}
+	public void addMissile1(double x, double y, double z) 
+	{	
+		addMissile(x, y, z, helliWidth/1.5, 0, 1000, 0.2, 32, 40, 400); //40  400
+	}
+	public void addMissile2(double x, double y, double z) 
+	{	
+		addMissile(x, y, z, helliWidth/1.5, 0, 420, 0.8, 52, 31, 600); 
+	}
+	public void addMissile3(double x, double y, double z) 
+	{	
+		addMissile(x, y, z, helliWidth/1.5, 0, 700, 0.8, 52, 100, 400); 
+	}
+	public void addNormalMissile(double x, double y, double z) 
+	{		
+		addMissile(x, y, z, helliWidth/1.5, 0, 500, 0.6, 50, 60, 300);//60  300
+	}
+
+	public void addFastMissile(double x, double y, double z) 
+	{
+		addMissile(x, y, z, helliWidth/1.5, 20, 900, 0.7, 70, 80, 200);
+	}
+
+
+	public void move(double d, double e, double f)
+	{
+		hellicopter.mati.setMatMove(d,e,f);
+		prepareToShowAndRepaint();
+	}
+	public void movemabat(double d, double e, double f)
+	{
+		mabatHellicopter.mati.setMatMove(d,e,f);
+		prepareToShowAndRepaint();
+	}
+	public void move(int d, int e, int f)
+	{
+		hellicopter.mati.setMatMove(d,e,f);
+		prepareToShowAndRepaint();
+	}
+	public void rotateXFix(double dy, double dz, double teta)
+	{
+		hellicopter.mati.setMatRotateFixX(dy,dz,teta);
+		prepareToShowAndRepaint();
+	}
+	public void rotateYFix(double dx, double dz, double teta)
+	{
+		hellicopter.mati.setMatRotateFixY(dx, dz,teta);
+		prepareToShowAndRepaint();
+	}
+	public void rotateZFix(double dx, double dy, double teta)
+	{
+		hellicopter.mati.setMatRotateFixZ(dx,dy,teta);
+		prepareToShowAndRepaint();
+	}
+	public void rotateAxis( double x1, double y1,double z1,
+			double x2, double y2,double z2,
+			double teta)
+	{
+		hellicopter.mati.setMatRotateAxis(x1, y1, z1, x2, y2, z2, teta);
+		prepareToShowAndRepaint();
+	}
+
+	public void scale(double dx, double dy, double dz, double sx, double sy, double sz)
+	{
+		hellicopter.mati.setMatScale(dx, dy, dz, sx, sy, sz);
+		prepareToShowAndRepaint();
+	}
+
+	public void moveLeft() 
+	{
+		hellicopter.phC.setXYZ(hellicopter.phB.x+1.25*(hellicopter.phF.x-hellicopter.phB.x), hellicopter.phB.y+1.25*(hellicopter.phF.y-hellicopter.phB.y), hellicopter.phB.z+1.25*(hellicopter.phF.z-hellicopter.phB.z));			
+		move(-(hellicopter.phC.x-hellicopter.phF.x), -(hellicopter.phC.y-hellicopter.phF.y), -(hellicopter.phC.z-hellicopter.phF.z));
+	}
+	public void moveRight() 
+	{
+		hellicopter.phC.setXYZ(hellicopter.phB.x+1.25*(hellicopter.phF.x-hellicopter.phB.x), hellicopter.phB.y+1.25*(hellicopter.phF.y-hellicopter.phB.y), hellicopter.phB.z+1.25*(hellicopter.phF.z-hellicopter.phB.z));
+		move(hellicopter.phC.x-hellicopter.phF.x, hellicopter.phC.y-hellicopter.phF.y, hellicopter.phC.z-hellicopter.phF.z);
+	}
+	public void rotateXFixUp() 
+	{
+		rotateXFix(hellicopter.p1.z, hellicopter.p1.y ,Math.PI/10);
+	}
+
+	public void rotateXFixDown() 
+	{
+		rotateXFix(hellicopter.hellibody.zReal[5],hellicopter.p1.y,-Math.PI/10);
+	}
+	public void moveUp() 
+	{
+		move(0,-50,0);
+	}
+	public void moveDown() 
+	{
+		move(0,50,0);
+	}
+	public void rotateYFixLeft() 
+	{
+		rotateYFix(hellicopter.p1.x, hellicopter.p1.z,Math.PI/10);
+	}
+	public void rotateYFixRight() 
+	{
+		rotateYFix(hellicopter.p1.x, hellicopter.p1.z,-Math.PI/10);
+	}
+	public void moveForward() 
+	{
+		move(0,0,-150);
+	}
+	public void moveBackward() 
+	{
+		move(0,0,150);
+	}
+	public void rotateZFixClock() 
+	{
+		rotateZFix(hellicopter.p1.x, hellicopter.p1.y,Math.PI/10);
+	}
+	public void rotateZFixQounter() 
+	{
+		rotateZFix(hellicopter.p1.x, hellicopter.p1.y,-Math.PI/10);
+	}
+	public void bigger() 
+	{
+		scale(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, 1.1, 1.1, 1.1);
+	}
+	public void smaller() 
+	{
+		scale(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, 0.9, 0.9, 0.9);
+	}
+	public void rotateAxisLeft(){
+
+		rotateAxis(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, hellicopter.p2.x, hellicopter.p2.y, hellicopter.p2.z, -Math.PI/20);
+	}
+	public void rotateAxisRight(){
+		rotateAxis(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, hellicopter.p2.x, hellicopter.p2.y, hellicopter.p2.z, Math.PI/20);
+	}
+
+	public void rotateAxisUp(){
+		//doesnt work
+		rotateAxis(hellicopter.helliStick.xReal[3], hellicopter.helliStick.yReal[3], hellicopter.helliStick.zReal[3], hellicopter.hellibody.xReal[7], hellicopter.hellibody.yReal[7], hellicopter.hellibody.zReal[7], Math.PI/20);
+	}
+
+
+
+	//		public void rotateYFix(double dx, double dz, double teta, Matrix3DForStu matrix)
+	//		{
+	//			matrix.setMatRotateFixX(dx,dz,teta);
+	//			prepareToShowAndRepaint();
+	//		}
+	//		public void rotateAxisLeft(Matrix3DForStu matrix, int x){
+	//			if(x==1)
+	//				rotateAxis(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, -Math.PI/20, matrix);
+	//			if(x==2)
+	//				rotateAxis(pmB.x, pmB.y, pmB.z, pmT.x, pmT.y, pmT.z, -Math.PI/20, matrix);
+	//
+	//		}
+	//		public void rotateAxisRight(Matrix3DForStu matrix, int x){
+	//			if(x==1)
+	//			{
+	//				rotateAxis(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, Math.PI/10, matrix);
+	//			}
+	//				//rotateYFix(p00.x, p00.z,Math.PI/20, matrix);
+	//			if(x==2)
+	//				rotateYFix(p00.x, p00.z, Math.PI/20, matrix);
+	//				//rotateAxis(pmB.x, pmB.y, pmB.z, pmT.x, pmT.y, pmT.z, Math.PI/20, matrix);
+	//
+	//		}
+	public void explosion() {
+		scale(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, 3.5, 3.5, 3.5);
+
+	}
+	//		public void calcCos(Missile miss, double x1, double y1,double z1,
+	//				double x2, double y2,double z2)
+	public void calcCos(Missile miss, Point3D missC, Point3D helliC, Point3D missR, Point3D missL)
+	{
+
+		double top, bottom, sizeH, sizeM;
+		top = missC.x*helliC.x + missC.y*helliC.y + missC.z*helliC.z;
+		sizeM = Math.sqrt(missC.x*missC.x + missC.y*missC.y + missC.z*missC.z);
+		sizeH = Math.sqrt(helliC.x*helliC.x + helliC.y*helliC.y + helliC.z*helliC.z);
+		bottom = sizeH*sizeM;
+		miss.matiMissile.setMatRotateAxis(missR.x, missR.y, missR.z, missL.x, missL.y, missL.z, Math.acos(top/bottom));
+
+		//			double a,b,c,l,d;
+		//			a = x2-x1; b = y2-y1; c = z2-z1;
+		//			l = (float) Math.sqrt(a*a+b*b+c*c);
+		//			a = a/l;   b = b/l;   c = c/l;
+		//			d = (float) Math.sqrt(b*b+c*c);
+
+	}
+
+	public void rotateMissile(Missile miss){
+		calcCos(miss, miss.pmMc, hellicopter.phCenter, miss.pmMr, miss.pmMl);
+	}
+
+
+	public void moveAni(char ch){
+		switch(ch)
+		{
+		case 'j':
+			rotateAxisLeft() ;
+			//				rotateAxisLeft(matiMissile, 2) ;
+			prepareToShowAndRepaint();
+			break;
+
+		case 'l':
+			rotateAxisRight() ;
+			//				rotateAxisRight(matiMissile, 1) ;
+			prepareToShowAndRepaint();
+			break;
+
+		case 'i':
+			//rotateAxisUp();
+			rotateXFixUp() ;
+			prepareToShowAndRepaint();
+			break;
+
+		case 'k':
+			rotateXFixDown() ;
+			prepareToShowAndRepaint();
+			break;
+
+		case 'e':
+			hellicopter.mati.setMatRotateFixX(hellicopter.phCenter.z, hellicopter.phCenter.y,Math.PI/20);
+			for (Missile miss : missileList) 					
+			{
+				if (miss.exists)
+				{ 
+					miss.matiMissile.setMatRotateFixX(hellicopter.phCenter.z, hellicopter.phCenter.y,Math.PI/20);
+					miss.currentGas++;
+					//miss.prevRotateAngleY-=Math.PI/20;
+				}
+			}
+
+			prepareToShowAndRepaint();
+			break;
+
+		case 'q':
+			//				{} 
+			//				{
+			//					for (Missile miss : missileList) 					
+			//					{
+			//						if (miss.exists)
+			//						{ 
+			//							miss.matiMissile.setMatRotateAxis(miss.pmMc.x, miss.pmMc.y, miss.pmMc.z,miss.pmF.x, miss.pmF.y, miss.pmF.z+0.0001, miss.spin);
+			//							//miss.mullMat();
+			//							//miss.matiMissile.setIdentity();
+			//						}
+			//					}
+			//				}	
+
+
+			hellicopter.mati.setMatRotateFixX(hellicopter.phCenter.z, hellicopter.phCenter.y,Math.PI/20);
+
+			for (Missile miss : missileList) 					
+			{
+				if (miss.exists)
+				{ 
+					miss.matiMissile.setMatRotateFixX(hellicopter.phCenter.z, hellicopter.phCenter.y ,Math.PI/20);
+					miss.currentGas++;
+				}
+			}
+
+
+			//				{} 
+			//				{
+			//					for (Missile miss : missileList) 					
+			//					{
+			//						 if (miss.exists)
+			//						 { 
+			//							 //moveAllMissiles(miss.pwx * 1.6, miss.pwy * 1.6, miss.pwz * 1.6, miss);
+			//							 
+			//							 //calcCos(miss, miss.pmMc, hellicopter.phCenter, miss.pmMr, miss.pmMl);
+			//							//miss.matiMissile.setMatRotateAxis(miss.pmF.x, miss.pmF.y, miss.pmF.z, miss.pmF.x-10, miss.pmF.y-0.00001, miss.pmF.z, Math.PI/10); //rotate missile vertically !!
+			//
+			//						 }
+			//					}
+			//				}	
+			//explosion();
+			prepareToShowAndRepaint();
+
+
+			//				hellicopter.mati.setIdentity();
+			//				matiMissile.setMatRotateFixZ(p00.x, p00.y, Math.PI/50);
+			//				prepareToShowAndRepaint();
+			//				matiMissile.setIdentity();
+			break;
+
+
+		case 'r':
+			hellicopter.mati.setMatRotateFixY(hellicopter.phCenter.x, hellicopter.phCenter.z,Math.PI/20);
+
+			for (Missile miss : missileList) 					
+			{
+				if (miss.exists)
+				{ 
+					miss.matiMissile.setMatRotateFixY(hellicopter.phCenter.x, hellicopter.phCenter.z,Math.PI/20);
+					miss.currentGas++;
+					//miss.prevRotateAngleY-=Math.PI/20;
+				}
+			}
+
+
+			//				for (Missile miss : mabatMissileList) 					
+			//				{
+			//					miss.matiMissile.setIdentity();
+			//				}
+			//tik--;
+			prepareToShowAndRepaint();
+			//hellicopter.mati.setIdentity();
+
+			break;
+
+		default:
+			break;
+		}
+	}
+
+
+
+	public void spinProp(){
+		matiProp.setMatRotateAxis(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, hellicopter.p2.x, hellicopter.p2.y, hellicopter.p2.z, Math.PI/10);
+		hellicopter.spinProp1(matiProp);
+		prepareToShowAndRepaintprop();
+	}
+
+
+
+
+	public void rotateXFixUp(double teta) 
+	{
+		rotateXFix(hellicopter.p1.z, hellicopter.p1.y ,teta);
+	}
+	public void rotateZFixQounter(double teta) 
+	{
+		rotateZFix(hellicopter.p1.x, hellicopter.p1.y,teta);
+	}
+	public void rotateAxisRight(double teta)
+	{
+		rotateAxis(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, hellicopter.p2.x, hellicopter.p2.y, hellicopter.p2.z, teta);
+	}
+	public void moveMissile(double d, double e, double f, Missile missile)
+	{
+
+		missile.matiMissile.setMatMove(d, e, f);
+		prepareToShowAndRepaint();
+	}
+
+	public void moveAllMissiles(double d, double e, double f, Missile missile)
+	{
+		missile.matiMissile.setMatMove(d, e, f);
+		prepareToShowAndRepaint();
+
+	}
+
+	//		public void moveFastMissile(double d, double e, double f)
+	//		{
+	//			matiFastMissile.setMatMove(d, e, f);
+	//			prepareToShowAndRepaint();
+	//		}
+
+	Matrix3DForStu matrix;
+
+	public void rotateAxis( double x1, double y1,double z1,
+			double x2, double y2,double z2,
+			double teta, Matrix3DForStu matrix)
+	{
+		matrix.setMatRotateAxis(x1, y1, z1, x2, y2, z2, teta);
+		prepareToShowAndRepaint();
+	}
+
+
+
+	public void startAnimaition()
+	{
+		if (thread==null)
+		{
+			thread= new Animation3DForStu(this);
+		}
+	}
+	public void suspendAnimation()
+	{
+		thread.suspend();
+	}
+
+	public void resumeAnimation()
+	{
+		thread.resume();
+	}
+
+
+	public void stopAnimation()
+	{
+		hellicopter.mati.setIdentity();
+		thread.stop();
+		thread=null;
+	}
+
+	boolean isDead = false;
+
+	public boolean isHIt()
+	{
+		boolean hit = false;
+
+		for (Missile miss : missileList) 
+		{	
+			if (miss.exists)
+			{ 
+				if(miss.isHIt( deathDistance))
+					hit=true;
+			}
+		}
+
+		return hit;
+		//return (Math.abs(missile.pW.x) <= deathDistance && Math.abs(missile.pW.y) <=deathDistance && Math.abs(missile.pW.z) <=deathDistance );
+
+	}
+
+
+
+
+
+
+
+	int tik = 0;
+
+	public void prepareToShowAndRepaint()
+	{
+
+
+		// Time
+		miliSeconds++;
+		if(miliSeconds==100)
+		{
+			seconds++;
+			miliSeconds=0;
+			if(seconds==60)
+			{
+				minutes++;
+				seconds=0;
+			}
+		}
+
+
+		sevivon.mullMat(mati);
+		sevivon2.mullMat(mati);
+
+
+		for (Missile miss : missileList) 
+		{
+			if(miss.existsTime==tik)
+			{
+				miss.exists=true;
+				miss.started=true;
+			}
+			
+			miss.calcDistanceW();
+			System.out.println("//distance** "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z));
+			System.out.println("//pmf  " +miss.missileNum+ miss.pmF);
+			System.out.println("//phc  " + hellicopter.phCenter);
+			System.out.println("//pw  " +miss.missileNum+ miss.pW);
+			if (miss.exists)
+			{
+				//						System.out.println("pmF-  "+ missile.pmF);
+				//						System.out.println("phcC-  "+hellicopter.phCenter);
+				//						System.out.println("pW-  "+missile.pW);
+				//						//System.out.println("distance-  "+"distance "+"- "+(int) Math.sqrt(missile.pW.x*missile.pW.x + missile.pW.y*missile.pW.y + missile.pW.z*missile.pW.z));
+				//
+				//						System.out.println("distance2 "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z));
+
+				miss.calcSum();
+				System.out.println("pw?  " +miss.missileNum+ miss.pW);
+				miss.calcDirection(tik);
+				miss.mullMat();
+
+				//						System.out.println("//pmF-  "+ miss.pmF);
+				////						System.out.println("phcC-  "+hellicopter.phCenter);
+				//						System.out.println("//pW-  "+miss.pW);
+				////						//System.out.println("distance-  "+"distance "+"- "+(int) Math.sqrt(missile.pW.x*missile.pW.x + missile.pW.y*missile.pW.y + missile.pW.z*missile.pW.z));
+				////
+				//						System.out.println("//distance2 "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z));
+				//						System.out.println(" ");
+
+			}
+			System.out.println();
+			System.out.println("//distance2 "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z));
+			System.out.println("//pmf  " +miss.missileNum+ miss.pmF);
+			System.out.println("//phc  " + hellicopter.phCenter);
+			System.out.println("//pw  " +miss.missileNum+ miss.pW);
+
+			System.out.println("-------------------------------------------------------------------------------------------------------");
+			System.out.println();
+
+
+		}
+
+		hellicopter.mullMat();
+//		for (Missile miss : missileList) 
+//		{
+//			System.out.println("//distance3 "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z));
+//			System.out.println("//pmf  " +miss.missileNum+ miss.pmF);
+//			System.out.println("//phc  " + hellicopter.phCenter);
+//			System.out.println("//pw  " +miss.missileNum+ miss.pW);
+//		}
+		//could add a function that changes mabat - miss.setExists(true/false)
+
+		for (Missile miss : missileList) 
+		{	
+			if (miss.exists){ 
+				for (Missile mMiss : mabatMissileList)
+				{ 
+					if (miss.missileNum==mMiss.missileNum)
+						mMiss.exists=true;
+				}
+			}
+			else{
+				for (Missile mMiss : mabatMissileList)
+				{ 
+					if (miss.missileNum==mMiss.missileNum)
+						mMiss.exists=false;
+				}
+			}
+			if (miss.started){ 
+				for (Missile mMiss : mabatMissileList)
+				{ 
+					if (miss.missileNum==mMiss.missileNum)
+						mMiss.started=true;
+				}
+			}
+			else{
+				for (Missile mMiss : mabatMissileList)
+				{ 
+					if (miss.missileNum==mMiss.missileNum)
+						mMiss.started=false;
+				}
+			}
+
+		}
+
+
+		/*
+		 *
+		 *	penalize missile for turning, take off a bit of speed
+		 *	
+		 */
+
+
+
+
+		//				for (Missile miss : mabatMissileList)
+		//				{ 
+		//					if (miss.currentGas == 0) {
+		//						miss.exists=false;
+		//					}
+		//				}
+		for (Missile miss : missileList)
+		{ 
+			if (miss.exists)
+			{
+				if (miss.currentGas == 20) {
+					miss.matiMissile.setMatMove(0, 10, 0);
+					miss.mullMat();
+				}
+				if(miss.currentGas>0)
+					miss.currentGas--;
+				if (miss.currentGas == 0) 
+				{
+					//							miss.matiMissile.setMatScale(
+					//									missile.missilebody.xReal[8],
+					//									missile.missilebody.yReal[8],
+					//									missile.missilebody.zReal[8], 0.5, 0.5, 0.5);
+					//							miss.mullMat();
+					miss.exists=false;		
+				}
+
+			}else
+			{ 
+				if(miss.started)
+					miss.waitTime--;
+				if(miss.waitTime==0)
+				{
+					miss.currentGas=miss.gasTank;
+					miss.speed=miss.origSpeed;
+					miss.waitTime=miss.waitSet;
+					miss.exists=true;
+
+				}
+			}
+		}
+
+		
+		
+		tik++;
+
+		repaint();
+		hellicopter.mati.setIdentity();
+		//for all missiles
+
+		for (Missile miss : missileList) 
+		{ 
+			if (miss.exists){ 
+//				miss.calcDistanceW();
+//				System.out.println("distance "+miss.missileNum+"- "+(int) Math.sqrt(miss.pW.x*miss.pW.x + miss.pW.y*miss.pW.y + miss.pW.z*miss.pW.z));
+//				System.out.println("pmf  " +miss.missileNum+ miss.pmF);
+//				System.out.println("phc  " + hellicopter.phCenter);
+//				System.out.println("pw  " +miss.missileNum+ miss.pW);
+				miss.matiMissile.setIdentity();
+			}
+		}
+
+	}
+
+
+	public void prepareToShowAndRepaintprop()
+	{
+		hellicopter.spinProp1(matiProp);
+		repaint();
+	}
+
+
+}
+
+

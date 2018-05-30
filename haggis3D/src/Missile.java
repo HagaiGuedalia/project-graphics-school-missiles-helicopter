@@ -5,7 +5,7 @@ import java.util.Stack;
 
 
 
-public class Missile extends Thread
+public class Missile implements Comparable
 {
 	MainPanel3DForStu myPanel;
 
@@ -23,7 +23,7 @@ public class Missile extends Thread
 	double randomRange, speed, sum, spin;
 	double origSpeed;
 	int gasTank, currentGas, callibrate;
-	boolean exists;
+	boolean exists, started;
 	int existsTime, missileNum, waitSet, waitTime;
 	
 	double prevRotateAngleY, prevRotateAngleZ;
@@ -56,6 +56,7 @@ public class Missile extends Thread
 		 rand = new Random();
 		
 		 exists = false;
+		 started=false;
 		 color = new Color(255, 0, 0);
 		 
 		 prevRotateAngleY=0.0;
@@ -152,7 +153,7 @@ public class Missile extends Thread
 		pmF.setXYZ(missilebody.xReal[8], missilebody.yReal[8], missilebody.zReal[8]);
 		pmB.setXYZ(missilebody.xReal[0], missilebody.yReal[0], missilebody.zReal[8]);
 		pW.setXYZ((myPanel.hellicopter.phCenter.x-pmF.x), (myPanel.hellicopter.phCenter.y-pmF.y), (myPanel.hellicopter.phCenter.z-pmF.z));
-		System.out.println("**pmF in -  "+ pmF);
+//		System.out.println("**pmF in -  "+ pmF);
 		pmMr.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[0])/3, pmF.y, missilebody.zReal[0]);
 //		pmMl.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[4])/3, pmF.y, missilebody.zReal[4]);
 		pmMl.setXYZ(missilebody.xReal[0]+(pmF.x-missilebody.xReal[4])/3, pmF.y, missilebody.zReal[4]);
@@ -421,7 +422,37 @@ public class Missile extends Thread
 	}
 
 
+	@Override
+	public int compareTo(Object other) 
+	{
+		if (other instanceof Missile)
+		{
+			if(getMaxZ()>((Missile)other).getMaxZ())
+				return -1;
+			else 
+				return 1;
+		}
+		if (other instanceof Hellicopter)
+		{
+			if(getMaxZ()>((Hellicopter)other).getMaxZ())
+				return -1;
+			else 
+				return 1;
+		}
+		
+		return 0;
+	}
 
+	 public double getMaxZ() 
+	{
+		double maxZ=missilebody.zReal[0];
+		for (int i = 0; i < missilebody.zReal.length; i++) 
+		{
+			if (missilebody.zReal[i]>maxZ)
+				maxZ=missilebody.zReal[i];
+		}
+		return maxZ;
+	}
 	
 
 
