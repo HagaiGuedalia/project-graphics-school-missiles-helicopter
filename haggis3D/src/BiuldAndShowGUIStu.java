@@ -216,11 +216,13 @@ public class BiuldAndShowGUIStu extends JToolBar implements ActionListener ,KeyL
 			break;
 
 		case 'm':
-			rotateAxisLeft.doClick() ;
+			//rotateAxisLeft.doClick() ;
+			mP.moveAni(ch);
 			break;
 
 		case ',':
-			rotateAxisRight.doClick() ;
+			//rotateAxisRight.doClick();
+			mP.moveAni(ch);
 			break;
 
 		case 'o':

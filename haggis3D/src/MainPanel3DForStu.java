@@ -124,7 +124,6 @@ public class MainPanel3DForStu extends JPanel
 		sevivon2.convertAndShow(page);
 
 		hellicopter.fromPointToGuf();
-		hellicopter.convertAndShow(page);
 
 		sortList.clear();
 		sortList.add(hellicopter);
@@ -151,13 +150,6 @@ public class MainPanel3DForStu extends JPanel
 		}
 
 
-		for (Missile miss : missileList) 
-		{
-			if (miss.exists){ 
-				miss.fromPointToGuf();
-				miss.convertAndShow(page);
-			}
-		}
 
 
 
@@ -172,7 +164,6 @@ public class MainPanel3DForStu extends JPanel
 		}
 
 
-		{
 			for (Missile miss : missileList) 
 			{
 				if (miss.exists)
@@ -206,7 +197,6 @@ public class MainPanel3DForStu extends JPanel
 
 			}
 
-		}
 
 
 		//check between missile/helli
@@ -435,8 +425,8 @@ public class MainPanel3DForStu extends JPanel
 	{
 		scale(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, 0.9, 0.9, 0.9);
 	}
-	public void rotateAxisLeft(){
-
+	public void rotateAxisLeft()
+	{
 		rotateAxis(hellicopter.p1.x, hellicopter.p1.y, hellicopter.p1.z, hellicopter.p2.x, hellicopter.p2.y, hellicopter.p2.z, -Math.PI/20);
 	}
 	public void rotateAxisRight(){
@@ -613,7 +603,7 @@ public class MainPanel3DForStu extends JPanel
 			//				{
 			//					miss.matiMissile.setIdentity();
 			//				}
-			//tik--;
+			tik--;
 			prepareToShowAndRepaint();
 			//hellicopter.mati.setIdentity();
 
@@ -732,6 +722,15 @@ public class MainPanel3DForStu extends JPanel
 
 	int tik = 0;
 
+	public void mullMatAll()
+	{
+		hellicopter.mullMat();
+		synchronized (object) {
+			for (Missile miss : missileList) {
+				miss.mullMat();
+			}
+		}
+	}
 	public void prepareToShowAndRepaint()
 	{
 
